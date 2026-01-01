@@ -2,8 +2,12 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI(title="Sreekesh M - Portfolio")
+
+# Get the directory where main.py is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # CORS middleware
 app.add_middleware(
@@ -18,7 +22,8 @@ app.add_middleware(
 @app.get("/", response_class=HTMLResponse)
 async def home():
     """Serve the main portfolio page."""
-    with open("static/index.html", "r", encoding="utf-8") as f:
+    html_path = os.path.join(BASE_DIR, "static", "index.html")
+    with open(html_path, "r", encoding="utf-8") as f:
         return f.read()
 
 
@@ -28,7 +33,8 @@ async def health_check():
 
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+static_path = os.path.join(BASE_DIR, "static")
+app.mount("/static", StaticFiles(directory=static_path), name="static")
 
 
 if __name__ == "__main__":
